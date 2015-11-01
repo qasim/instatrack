@@ -1,1 +1,27 @@
-The homepage
+<html lang='en'>
+  <head>
+    <title>instatrack</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="Track tags via Instagram in real-time from an attractive Google Trends-esque webpage.">
+    <meta name="keywords" content="instatrack, instagram, qas.im" />
+    <link href="./assets/css/style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="home">
+      <h1>instatrack</h1>
+      <p>
+        Track a tag and see Instagram posts about them in real-time.
+      </p>
+      <form action="?" method="GET">
+        <input type="text" name="tag" placeholder="pizza" />
+        <input type="submit" value="track" />
+      </form>
+    </div>
+    <div id="grid" class="hidden">
+    </div>
+    <script src="./assets/js/script.js"></script>
+  </body>
+</html>
