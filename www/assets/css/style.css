@@ -1,3 +1,62 @@
-.hidden {
-  display: none;
+body {
+
+}
+
+* {
+	box-sizing: border-box;
+}
+
+.track-box {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+}
+
+.grid {
+  height: 100%;
+  background: #060606;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: stretch;
+}
+
+.item {
+  flex-grow: 1;
+  flex-basis: calc(100% / 5);
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+  background-size: cover;
+}
+
+.item .info {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.item .info .photo {
+  background: #ddd;
+  height: 48px;
+  width: 48px;
+  border-radius: 100%;
+  float: left;
+  margin-right: 8px;
+}
+
+.item .info .text {
+  color: #ddd;
+  font-size: 16px;
+  max-height: 48px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 280ms ease-in-out;
+}
+
+.item .info .text:hover {
+  max-height: 416px;
 }

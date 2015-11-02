@@ -3,9 +3,20 @@ window.minTagID = ''
 $(document).ready(function () {
   var tag = getTag()
   if (tag != '') {
+    var grid = $('.grid')
+    for (i = 0; i < 20; i++) {
+      grid.append('\
+<div class="item" id="index_' + i + '"> \
+  <div class="info"> \
+    <div class="photo"></div> \
+    <div class="text"></div> \
+  </div> \
+</div>')
+    }
+
     $("#tag").val(tag)
     getMedia(tag)
-    var timer = setInterval(function () { getMedia(tag) }, 2000)
+    // var timer = setInterval(function () { getMedia(tag) }, 2000)
   }
 })
 
@@ -20,6 +31,17 @@ function getMedia(tag) {
     if (data.data.length > 0) {
       window.minTagID = data.pagination.min_tag_id
     }
+    var data = data.data
     console.log(data)
+    for(i = 0; i < data.length; i++) {
+      var item = $('#index_' + i)
+      item.css({
+        'background-image': 'url(' + data[i].images.standard_resolution.url + ')'
+      })
+      item.find('.photo').css({
+        'background-image': 'url(' + data[i].user.profile_picture + ')'
+      })
+      item.find('.text').html(data[i].caption.text)
+    }
   })
 }
