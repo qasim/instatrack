@@ -35,3 +35,24 @@ type OAuthResponse struct {
 	AccessToken string `json:"access_token"`
 	User        *User
 }
+
+// NewSubscription object from Instagram
+type NewSubscription struct {
+	Meta *Meta
+	Data []*NewSubscriptionData
+}
+
+// Meta object from Instagram
+type Meta struct {
+	Code int64
+}
+
+// NewSubscriptionData object from Instagram
+type NewSubscriptionData struct {
+	ID          string
+	Type        string
+	Object      string
+	ObjectID    string `json:"object_id"`
+	Aspect      string
+	CallbackURL string `json:"callback_url"`
+}

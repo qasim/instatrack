@@ -1,16 +1,25 @@
-if(window.location.href.match("tag=")) {
-  document.getElementById('home').classList.add('hidden')
-  document.getElementById('grid').classList.remove('hidden')
+window.minTagID = ''
 
-  console.log('Making socket connection...')
-  var socket = new WebSocket("ws://localhost:3000/socket")
-
-  socket.onopen = function() {
-    console.log('Opened')
-    socket.send("Connection init")
+$(document).ready(function () {
+  var tag = getTag()
+  if (tag != '') {
+    $("#tag").val(tag)
+    getMedia(tag)
+    var timer = setInterval(function () { getMedia(tag) }, 2000)
   }
+})
 
-  socket.onmessage = function(e) {
-    console.log("Received: " + e.data)
-  }
+function getTag() {
+  var url = window.location.href
+  if(url.indexOf('=') < 0) return ''
+  return window.location.href.split('=')[1]
+}
+
+function getMedia(tag) {
+  $.getJSON("/media?tag=" + tag + '&min_tag_id=' + window.minTagID, function (data) {
+    if (data.data.length > 0) {
+      window.minTagID = data.pagination.min_tag_id
+    }
+    console.log(data)
+  })
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -15,6 +16,7 @@ var (
 	clientID     = os.Getenv("CLIENT_ID")
 	clientSecret = os.Getenv("CLIENT_SECRET")
 	redirectURI  = os.Getenv("REDIRECT_URI")
+	callbackURL  = os.Getenv("CALLBACK_URL")
 	upgrader     = websocket.Upgrader{ReadBufferSize: 1024, WriteBufferSize: 1024}
 )
 
@@ -47,6 +49,7 @@ func handleAuth(w http.ResponseWriter, r *http.Request) {
 	if query.Get("error") != "" {
 		// User refused to be insta-cool
 		http.Redirect(w, r, "/", 301)
+		return
 	}
 
 	resp, err := http.PostForm("https://api.instagram.com/oauth/access_token",
@@ -58,6 +61,7 @@ func handleAuth(w http.ResponseWriter, r *http.Request) {
 			"code":          {query.Get("code")}})
 	if err != nil {
 		http.Redirect(w, r, "/error", 301)
+		return
 	}
 	defer resp.Body.Close()
 
@@ -66,6 +70,7 @@ func handleAuth(w http.ResponseWriter, r *http.Request) {
 	err = decoder.Decode(&o)
 	if err != nil {
 		http.Redirect(w, r, "/error", 301)
+		return
 	}
 
 	expiryDate := time.Now().AddDate(0, 0, 1)
@@ -80,68 +85,53 @@ func handleAuth(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/track", 301)
 }
 
-func handleSubscriptions(w http.ResponseWriter, r *http.Request) {
+func handleMedia(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		http.Error(w, fmt.Sprintf("Unsupported method: %s", r.Method),
 			http.StatusMethodNotAllowed)
 		return
 	}
 
-	fmt.Fprint(w, r.URL.Query().Get("hub.challenge"))
-}
+	cookie, err := r.Cookie("access_token")
 
-func handleSocket(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		http.Redirect(w, r, "/", 301)
 		return
 	}
 
-	for {
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			return
-		}
-
-		err = conn.WriteMessage(messageType, p)
-		if err != nil {
-			return
-		}
-	}
-}
-
-func handleItems(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "POST":
+	query := r.URL.Query()
+	tag := query.Get("tag")
+	if len(tag) == 0 {
+		http.Redirect(w, r, "/track", 301)
 		return
-	case "GET":
-		return
-	default:
-		http.Error(w, fmt.Sprintf("Unsupported method: %s", r.Method),
-			http.StatusMethodNotAllowed)
 	}
+
+	minTagID := query.Get("min_tag_id")
+
+	url := fmt.Sprintf("https://api.instagram.com/v1/tags/%s/media/recent?access_token=%s&min_tag_id=%s",
+		tag, cookie.Value, minTagID)
+	resp, err := http.Get(url)
+	if err != nil {
+		http.Redirect(w, r, "/error", 301)
+		return
+	}
+	defer resp.Body.Close()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-cache")
+	io.Copy(w, resp.Body)
 }
 
 func main() {
+	http.HandleFunc("/", handleIndex)
+	http.HandleFunc("/auth/", handleAuth)
+	http.HandleFunc("/media", handleMedia)
+	http.Handle("/track/", http.StripPrefix("/track/", http.FileServer(http.Dir("./www"))))
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"
 	}
-
-	http.HandleFunc("/auth/", handleAuth)
-	http.Handle("/track/", http.StripPrefix("/track/", http.FileServer(http.Dir("./www"))))
-
-	http.HandleFunc("/socket", handleSocket)
-
-	http.HandleFunc("/subscriptions", handleSubscriptions)
-
-	http.HandleFunc("/", handleIndex)
-
 	log.Println("Server running at http://localhost:" + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
