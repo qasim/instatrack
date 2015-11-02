@@ -5,18 +5,12 @@ $(document).ready(function () {
   if (tag != '') {
     var grid = $('.grid')
     for (i = 0; i < 20; i++) {
-      grid.append('\
-<div class="item" id="index_' + i + '"> \
-  <div class="info"> \
-    <div class="photo"></div> \
-    <div class="text"></div> \
-  </div> \
-</div>')
+      grid.append('<div class="item" id="index_' + i + '"></div>')
     }
 
     $("#tag").val(tag)
     getMedia(tag)
-    // var timer = setInterval(function () { getMedia(tag) }, 2000)
+    var timer = setInterval(function () { getMedia(tag) }, 2000)
   }
 })
 
@@ -32,16 +26,32 @@ function getMedia(tag) {
       window.minTagID = data.pagination.min_tag_id
     }
     var data = data.data
-    console.log(data)
+    var indices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    indices = shuffle(indices)
     for(i = 0; i < data.length; i++) {
-      var item = $('#index_' + i)
+      var item = $('#index_' + indices[i])
       item.css({
         'background-image': 'url(' + data[i].images.standard_resolution.url + ')'
       })
-      item.find('.photo').css({
-        'background-image': 'url(' + data[i].user.profile_picture + ')'
-      })
-      item.find('.text').html(data[i].caption.text)
     }
   })
+}
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex ;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }
