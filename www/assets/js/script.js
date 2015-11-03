@@ -1,5 +1,4 @@
 window.minTagID = ''
-var colorThief = new ColorThief()
 
 $(document).ready(function () {
   var tag = getTag()
@@ -68,7 +67,16 @@ function preload(url, cb) {
   var img = new Image()
   img.crossOrigin = 'Anonymous'
   img.onload = function() {
-    cb(url, colorThief.getColor(img))
+    var vibrant = new Vibrant(img)
+    var swatches = vibrant.swatches()
+    var color = swatches['LightMuted']
+    if (!color) {
+      color = swatches['Muted']
+    }
+    if (!color) {
+      color = swatches['DarkMuted']
+    }
+    cb(url, color.getRgb())
   }
   img.src = url
 }
