@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/qasim/instatrack/Godeps/_workspace/src/github.com/gorilla/websocket"
 	"io"
 	"log"
 	"net/http"
@@ -16,8 +15,6 @@ var (
 	clientID     = os.Getenv("CLIENT_ID")
 	clientSecret = os.Getenv("CLIENT_SECRET")
 	redirectURI  = os.Getenv("REDIRECT_URI")
-	callbackURL  = os.Getenv("CALLBACK_URL")
-	upgrader     = websocket.Upgrader{ReadBufferSize: 1024, WriteBufferSize: 1024}
 )
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
