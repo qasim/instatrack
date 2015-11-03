@@ -132,6 +132,6 @@ func main() {
 	if port == "" {
 		port = "3000"
 	}
-	log.Println("Server running at http://localhost:" + port)
+	log.Println("Server running at port " + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
