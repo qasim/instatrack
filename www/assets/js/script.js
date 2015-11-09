@@ -7,7 +7,6 @@ $(document).ready(function () {
     for (i = 0; i < 20; i++) {
       grid.append('<div class="item index_' + i + '" id="index_' + i + '"></div>')
     }
-
     $("#tag").val(tag)
     getMedia(tag)
     var timer = setInterval(function () { getMedia(tag) }, 1400)
