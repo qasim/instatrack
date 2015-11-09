@@ -1,12 +1,11 @@
-window.minTagID = ''
-
 $(document).ready(function () {
+  window.minTagID = ''
+  window.grid = $('.grid')
+  window.indices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+  window.direction = ['left', 'right', 'up', 'down']
   var tag = getTag()
   if (tag != '') {
-    var grid = $('.grid')
-    for (i = 0; i < 20; i++) {
-      grid.append('<div class="item index_' + i + '" id="index_' + i + '"></div>')
-    }
+    for (i = 0; i < 20; i++) grid.append('<div class="item index_' + i + '" id="index_' + i + '"></div>')
     $("#tag").val(tag)
     getMedia(tag)
     var timer = setInterval(function () { getMedia(tag) }, 1400)
@@ -25,10 +24,9 @@ function getMedia(tag) {
       window.minTagID = data.pagination.min_tag_id
     }
     var data = data.data
-    var indices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
-    indices = shuffle(indices)
+    window.indices = shuffle(window.indices)
     data.forEach(function(e, i) {
-      var item = $('#index_' + indices[i])
+      var item = $('#index_' + window.indices[i])
       var time = new Date(parseInt(data[i].created_time) * 1000).toISOString()
       var link = data[i].link
       var caption = data[i].caption.text
@@ -37,12 +35,15 @@ function getMedia(tag) {
         item.css('z-index', '0')
         var newItem = $('<div class="item ' + item.attr('id') + '" style="display: none; z-index: 50" id="' + item.attr('id') + '" onclick="window.open(\'' + link + '\', \'_blank\')"><div class="info" title="' + time + '">' + caption + '</div></div>')
         newItem.insertBefore(item)
-        newItem.css({
-          'background': 'url(' + url + ') no-repeat center center'
-        })
-        document.styleSheets[0].addRule('#' + newItem.attr('id') + ':after', 'background-color: rgb(' + rgb + ')');
-        $(".info").timeago()
-        newItem.fadeIn(647, function () {
+        newItem.css({ 'background': 'url(' + url + ') no-repeat center center' })
+        newItem.find('.info').timeago()
+        //document.styleSheets[0].addRule('#' + newItem.attr('id') + ':after', 'background-color: rgb(' + rgb + ')')
+        var randomDirection = window.direction[Math.floor(Math.random()*4)]
+        newItem.show('slide', {
+          direction: randomDirection,
+          easing: 'easeOutExpo'
+        }, 1168, function() {
+          console.log(item.attr('id'), newItem.attr('id'))
           item.remove()
         })
       })
@@ -66,7 +67,7 @@ function preload(url, cb) {
   var img = new Image()
   img.crossOrigin = 'Anonymous'
   img.onload = function() {
-    var vibrant = new Vibrant(img)
+    /*var vibrant = new Vibrant(img)
     var swatches = vibrant.swatches()
     var color = swatches['LightMuted']
     if (!color) {
@@ -74,8 +75,8 @@ function preload(url, cb) {
     }
     if (!color) {
       color = swatches['DarkMuted']
-    }
-    cb(url, color.getRgb())
+    }*/
+    cb(url, [255,255,255]/*color.getRgb()*/)
   }
   img.src = url
 }
