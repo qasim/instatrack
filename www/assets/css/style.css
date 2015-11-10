@@ -23,7 +23,7 @@ body {
 }
 
 .splash .content {
-  max-width: 50%;
+  padding-bottom: 48px;
 }
 
 .splash h1 {
@@ -35,7 +35,8 @@ body {
 
 .splash .slogan {
   font-size: 18px;
-  margin-bottom: 72px;
+  margin-top: -6px;
+  margin-bottom: 82px;
   color: #b6b6b6;
 }
 
@@ -44,6 +45,28 @@ body {
   color: #fff;
   padding: 12px 16px;
   border-radius: 3px;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+.credits {
+  position: absolute;
+  text-align: right;
+  width: 100%;
+  right: 16px;
+  top: 16px;
+  color: #fff;
+  z-index: 100;
+  line-height: 24px;
+  font-size: 16px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.3)
+}
+
+.credits a:link, .credits a:visited {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 600;
+  color: #fff;
+  color: rgba(255, 255, 255, 0.6)
 }
 
 .track-box {
@@ -114,7 +137,7 @@ body {
   top: 0;
   left: 0;
   position: absolute;
-  opacity: 0.6;
+  opacity: 0.647;
   transition: all 647ms ease-in-out;
 }
 

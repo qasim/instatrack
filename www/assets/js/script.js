@@ -3,13 +3,25 @@ $(document).ready(function () {
   window.grid = $('.grid')
   window.indices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
   window.direction = ['left', 'right', 'up', 'down']
+  window.inactive = null
   var tag = getTag()
   if (tag != '') {
     for (i = 0; i < 20; i++) grid.append('<div class="item index_' + i + '" id="index_' + i + '"></div>')
-    $("#tag").val(tag)
+    $('#tag').val(tag)
     getMedia(tag)
     var timer = setInterval(function () { getMedia(tag) }, 1400)
   }
+
+  $(document).mousemove(function() {
+      clearTimeout(window.inactive)
+      $('.track-box').show()
+      window.inactive = setTimeout(function () {
+          $('.track-box').hide()
+      }, 10000)
+  }).mouseleave(function() {
+      clearTimeout(window.inactive)
+      $('.track-box').hide()
+  })
 })
 
 function getTag() {
@@ -19,7 +31,7 @@ function getTag() {
 }
 
 function getMedia(tag) {
-  $.getJSON("/media?tag=" + tag + '&min_tag_id=' + window.minTagID, function (data) {
+  $.getJSON('/media?tag=' + tag + '&min_tag_id=' + window.minTagID, function (data) {
     if (data.data.length > 0) {
       window.minTagID = data.pagination.min_tag_id
     }
@@ -33,17 +45,15 @@ function getMedia(tag) {
       preload([data[i].images.standard_resolution.url], function(url, c) {
         var rgb = c[0] + ',' + c[1] + ',' + c[2]
         item.css('z-index', '0')
-        var newItem = $('<div class="item ' + item.attr('id') + '" style="display: none; z-index: 50" id="' + item.attr('id') + '" onclick="window.open(\'' + link + '\', \'_blank\')"><div class="info" title="' + time + '">' + caption + '</div></div>')
-        newItem.insertBefore(item)
+        window.grid.append('<div class="item ' + item.attr('id') + ' ' + data[i].id + '" style="display: none; z-index: 50" id="' + item.attr('id') + '" onclick="window.open(\'' + link + '\', \'_blank\')"></div>')
+        var newItem = $('.' + data[i].id)
         newItem.css({ 'background': 'url(' + url + ') no-repeat center center' })
-        newItem.find('.info').timeago()
-        //document.styleSheets[0].addRule('#' + newItem.attr('id') + ':after', 'background-color: rgb(' + rgb + ')')
+        document.styleSheets[0].addRule('#' + newItem.attr('id') + ':after', 'background-color: rgb(' + rgb + ')')
         var randomDirection = window.direction[Math.floor(Math.random()*4)]
         newItem.show('slide', {
           direction: randomDirection,
           easing: 'easeOutExpo'
-        }, 1168, function() {
-          console.log(item.attr('id'), newItem.attr('id'))
+        }, 1200, function() {
           item.remove()
         })
       })
@@ -67,7 +77,7 @@ function preload(url, cb) {
   var img = new Image()
   img.crossOrigin = 'Anonymous'
   img.onload = function() {
-    /*var vibrant = new Vibrant(img)
+    var vibrant = new Vibrant(img)
     var swatches = vibrant.swatches()
     var color = swatches['LightMuted']
     if (!color) {
@@ -75,8 +85,8 @@ function preload(url, cb) {
     }
     if (!color) {
       color = swatches['DarkMuted']
-    }*/
-    cb(url, [255,255,255]/*color.getRgb()*/)
+    }
+    cb(url, color.getRgb())
   }
   img.src = url
 }
