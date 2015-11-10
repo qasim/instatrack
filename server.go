@@ -17,15 +17,10 @@ var (
 	redirectURI  = os.Getenv("REDIRECT_URI")
 )
 
-func handleIndex(w http.ResponseWriter, r *http.Request) {
+func handleInstagram(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		http.Error(w, fmt.Sprintf("Unsupported method: %s", r.Method),
 			http.StatusMethodNotAllowed)
-		return
-	}
-
-	if r.URL.Path != "/" {
-		// We only want this to match the true index
 		return
 	}
 
@@ -120,10 +115,10 @@ func handleMedia(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", handleIndex)
+	http.Handle("/", http.FileServer(http.Dir("./www")))
+	http.HandleFunc("/instagram", handleInstagram)
 	http.HandleFunc("/auth/", handleAuth)
 	http.HandleFunc("/media", handleMedia)
-	http.Handle("/track/", http.StripPrefix("/track/", http.FileServer(http.Dir("./www"))))
 
 	port := os.Getenv("PORT")
 	if port == "" {
