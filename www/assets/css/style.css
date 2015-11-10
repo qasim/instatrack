@@ -129,19 +129,17 @@ body {
   height: 25%;
 }
 
-.item:after {
-  content: '';
-  display: block;
+.item .color {
   height: 100%;
   width: 100%;
   top: 0;
   left: 0;
   position: absolute;
   opacity: 0.647;
-  transition: all 647ms ease-in-out;
+  transition: opacity 200ms ease-in-out;
 }
 
-.item:hover:after {
+.item .color:hover {
   opacity: 0;
 }
 

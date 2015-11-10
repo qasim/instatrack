@@ -45,10 +45,8 @@ function getMedia(tag) {
       preload([data[i].images.standard_resolution.url], function(url, c) {
         var rgb = c[0] + ',' + c[1] + ',' + c[2]
         item.css('z-index', '0')
-        window.grid.append('<div class="item ' + item.attr('id') + ' ' + data[i].id + '" style="display: none; z-index: 50" id="' + item.attr('id') + '" onclick="window.open(\'' + link + '\', \'_blank\')"></div>')
+        window.grid.append('<div class="item ' + item.attr('id') + ' ' + data[i].id + '" style="display: none; z-index: 50; background: url(' + url + ') no-repeat center center" id="' + item.attr('id') + '" onclick="window.open(\'' + link + '\', \'_blank\')"><div class="color" style="background-color: rgb(' + rgb + ')"></div></div>')
         var newItem = $('.' + data[i].id)
-        newItem.css({ 'background': 'url(' + url + ') no-repeat center center' })
-        document.styleSheets[0].addRule('#' + newItem.attr('id') + ':after', 'background-color: rgb(' + rgb + ')')
         var randomDirection = window.direction[Math.floor(Math.random()*4)]
         newItem.show('slide', {
           direction: randomDirection,
