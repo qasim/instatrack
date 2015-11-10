@@ -3,7 +3,6 @@ $(document).ready(function () {
   window.grid = $('.grid')
   window.indices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
   window.direction = ['left', 'right', 'up', 'down']
-  window.inactive = null
   var tag = getTag()
   if (tag != '') {
     for (i = 0; i < 20; i++) grid.append('<div class="item index_' + i + '" id="index_' + i + '"></div>')
@@ -13,21 +12,18 @@ $(document).ready(function () {
   }
 
   $(document).mousemove(function() {
-      clearTimeout(window.inactive)
       $('.track-box').show()
-      window.inactive = setTimeout(function () {
-          $('.track-box').hide()
-      }, 10000)
   }).mouseleave(function() {
-      clearTimeout(window.inactive)
+    if(!$('#tag').is(":focus")) {
       $('.track-box').hide()
+    }
   })
 })
 
 function getTag() {
   var url = window.location.href
-  if(url.indexOf('=') < 0) return ''
-  return window.location.href.split('=')[1]
+  if(url.indexOf('?tag=') < 0) return ''
+  return decodeURIComponent(window.location.href.split('?tag=')[1]).replace(/\+/g, ' ')
 }
 
 function getMedia(tag) {
