@@ -6,9 +6,12 @@ $(document).ready(function () {
   var tag = getTag()
   if (tag != '') {
     for (i = 0; i < 20; i++) grid.append('<div class="item index_' + i + '" id="index_' + i + '"></div>')
-    $('#tag').val(tag)
+    $('#tag').val(tag).blur()
     getMedia(tag)
     var timer = setInterval(function () { getMedia(tag) }, 1400)
+    document.title = '#' + tag + ' - insatrack'
+  } else {
+    $('#tag').focus()
   }
 
   $(document).mousemove(function() {
@@ -23,7 +26,7 @@ $(document).ready(function () {
 function getTag() {
   var url = window.location.href
   if(url.indexOf('?tag=') < 0) return ''
-  return decodeURIComponent(window.location.href.split('?tag=')[1]).replace(/\+/g, ' ')
+  return decodeURIComponent(window.location.href.split('?tag=')[1]).replace(/\+/g, ' ').replace(/#/g, '')
 }
 
 function getMedia(tag) {
